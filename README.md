@@ -29,14 +29,14 @@ There are currently two scripts:
 ##All fonts (except LTibetan) to Unicode for AdobeIndesign
 
 This is an InDesign jsx script that you can save to:
- * Windows XP: `C:\Documents and Settings\\*username*\Application Data\Adobe\InDesign\Version 7.0\\*username*\Scripts\Scripts Panel`
- * Windows Vista: `C:\Users\\*username*\AppData\Roaming\Adobe\InDesign\Version 7.0\\*locale*\Scripts\Scripts Panel`
- * Mac OS: `/Users/*username*/Library/Preferences/Adobe InDesign/Version 7.0/*locale*/Scripts/Scripts Panel`
+ * Windows XP: `C:\Documents and Settings\<username>\Application Data\Adobe\InDesign\<version>\<username>\Scripts\Scripts Panel\`
+ * Windows Vista: `C:\Users\<username>\AppData\Roaming\Adobe\InDesign\<version>\<locale>\Scripts\Scripts Panel\`
+ * Mac OS: `/Users/<username>/Library/Preferences/Adobe InDesign/<version>/<locale>/Scripts/Scripts Panel`
 
-where *username* is your OS-X user name and *locale* references your location and language, for example, en_US.
+where `<username>` is your user name, and `<locale>` and `<version>` should be relatively obvious.
 
 Once the script is in the folder, it appears on the Scripts panel inside InDesign.
-To display the panel, choose Window > Utilities > Scripts. Double-click the script
+To display the panel, choose *Window -> Utilities -> Scripts*. Double-click the script
 to convert from any old encoding to Unicode. You can set the font and size by
 editing the script (it is in the first lines).
 
@@ -44,8 +44,10 @@ Not that it auomatically sets the Paragraph Builder to World-Ready Composer.
 
 ##LTibetan to Unicode for LibreOffice
 
-This is a python script that you can save in 
-$HOME/.config/libreoffice/$VERSION/user/Scripts/python/LtibtoUni.py
-where $HOME is your home directory and $VERSION your LibreOffice version
-directory (there should be only one). One you have saved it, you can convert
-files with LTibetan font into Unicode.
+This is a python script that you can save to (under Linux)
+    <home>/.config/libreoffice/<version>/user/Scripts/python/LtibtoUni.py
+where `<home>` is your home directory and `<version>` your LibreOffice version
+directory (there should be only one). Adapting to Windows or MacOSX directories
+should be relatively easy.
+
+Once you have saved it, you can convert files with LTibetan font into Unicode.
