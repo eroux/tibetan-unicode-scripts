@@ -1,7 +1,7 @@
-tibetan-unicode-scripts
+Tibetan Unicode Scripts
 =======================
 
-Some random Tibetan Encoding translation scripts.
+This repository contains some random Tibetan Encoding translation scripts.
 
 I came across difficulties with old documents with Tibetan fonts encoded in old
 8-bit hacky non-standard encodings (Dedris, Esama, LTibetan, etc.), and none
