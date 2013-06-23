@@ -1,5 +1,10 @@
 *.py[cod]
 
+*~
+
+*.jsb
+*.jsxbin
+
 # C extensions
 *.so
 
