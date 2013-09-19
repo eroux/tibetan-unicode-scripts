@@ -285,6 +285,18 @@ tibchosgyalskt['4'] = [[" ",0], ["༊",0], ["࿐",0], ["࿑",0], ["༉",0], ["FA
 ["FALM",0], ["FALM",0], ["༖",0], ["FALM",0], ["FALM",0], ["༘",0], ["༿",0], ["༾",0], ["FALM",0], ["༙",0], 
 ["漢",0], ["ཕ༹",0], [" ",0], ["FALM",0], ["༕",0]];
 
+tibchosgyalskt['5'] = [[" ",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], 
+["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], 
+["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], 
+["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], 
+["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], 
+["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], 
+["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], 
+["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], 
+["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], 
+["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], 
+["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0], ["FALM",0]];
+
 // here was a start of conversion for the Tibetan Classic Sanskrit font, but abandonned because of a lack of example.
 
 //var tibclasskt = new Array();
