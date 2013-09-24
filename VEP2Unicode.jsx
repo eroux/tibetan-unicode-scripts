@@ -47,7 +47,7 @@ var CS3Charcor = {
 "1398041963":"™",
 "1397058884":"—",
 "1397059140":"–",
-//"1396983920":"", // specific to each font
+"1396983920":"XXX", // see comment on DISCRETIONARY_HYPHEN
 "1397645928":"NONBREAKING_HYPHEN",
 "1396984945":"“",
 "1396986481":"”",
@@ -73,7 +73,13 @@ var UniNameCharcor = {
 "TRADEMARK_SYMBOL":"™",
 "EM_DASH":"—",
 "EN_DASH":"–",
-//"DISCRETIONARY_HYPHEN":"", // this is specific to each font
+// DISCRETIONARY_HYPHEN is a very special case: there is a glyph coded for
+// this character in the font, and the glyph appears in the glyph
+// list of InDesign, but if you click on it, it won't appear (as this code is
+// not displayed), so sometimes, when you have this code this means that the user
+// tried to select the glyph, but it didn't work, so it should be replaced by
+// nothing, hence the special code...
+"DISCRETIONARY_HYPHEN":"XXX",
 //"NONBREAKING_HYPHEN":"",
 "DOUBLE_LEFT_QUOTE":"“",
 "DOUBLE_RIGHT_QUOTE":"”",
@@ -535,6 +541,16 @@ function ConvertChar(c, fname) {
   var cc = f[2][c];
   //alert(cc);
   //alert(f[0][cc]);
+  if (UniNameCharcor[c]=="XXX" || CS3Charcor[c]=="XXX") // see the comment on DISCRETIONARY_HYPHEN, far above
+    {
+	  return ["", 0];
+	}
+  if (cc == null) {
+		cc = f[2][UniNameCharcor[c]];
+		  if (cc == null) {
+  		  cc = f[2][CS3Charcor[c]];
+		  }
+    }
   if (cc == null || f[0][cc] == null) {
 		return [c, 4];
     }
