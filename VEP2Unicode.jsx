@@ -23,11 +23,22 @@ var ConvertTibetanMachineWeb = 1;
 // set the font you want to use for Unicode:
 var UniTibetanFont = "Jomolhari-ID";
 var UniTibetanFontSize = 26;
+// WRC shouldn't be used (too buggy with Tibetan...)
+var ConvertToWRC = 0;
 
-// first a simple main function
-function main(){
-    FindandReplace();
-}
+// An important config table, for automatic formatting:
+// keys are the font sizes, and values are either:
+//   - the font size at which we want to convert them (if the value is numeric)
+//   - the character style which they'll get (if not numeric).
+// In the values given as examples, if the script encounters characters with size 13, it will
+// convert them to characters in size 32, and if it encounters size 14, it will convert to style
+// 'foo', creating it if it doesn't exist.
+var FontSizeCor = {
+  13: 32,
+  14: 'foo',
+};
+
+
 
 // For CS3 and CS4, InDesign gives sometimes numbers, their meaning is here:
 // http://www.cooldtp.cn/InDesign/CS3-JavaScript-help/pg_SpecialCharacters.html
@@ -36,58 +47,58 @@ function main(){
 // is not found in the character tables
 
 var CS3Charcor = {
-//"1400073805":"SECTION_MARKER",
-"1396862068":"•",
-"1396929140":"©",
-"1396991858":"°",
-"1397518451":"…",
-"1397776754":"¶",
-"1397904493":"®",
-"1400073811":"§",
-"1398041963":"™",
-"1397058884":"—",
-"1397059140":"–",
-"1396983920":"XXX", // see comment on DISCRETIONARY_HYPHEN
-"1397645928":"NONBREAKING_HYPHEN",
-"1396984945":"“",
-"1396986481":"”",
-"1397967985":"‘",
-"1397969521":"’",
-//"1397645907":"NONBREAKING_SPACE",
-"1397969777":"'",
-"1396986737":'"',
-"&apos;":"'",
-"&quot;":'"',
+  //"1400073805":"SECTION_MARKER",
+  "1396862068":"•",
+  "1396929140":"©",
+  "1396991858":"°",
+  "1397518451":"…",
+  "1397776754":"¶",
+  "1397904493":"®",
+  "1400073811":"§",
+  "1398041963":"™",
+  "1397058884":"—",
+  "1397059140":"–",
+  "1396983920":"XXX", // see comment on DISCRETIONARY_HYPHEN
+  "1397645928":"NONBREAKING_HYPHEN",
+  "1396984945":"“",
+  "1396986481":"”",
+  "1397967985":"‘",
+  "1397969521":"’",
+  //"1397645907":"NONBREAKING_SPACE",
+  "1397969777":"'",
+  "1396986737":'"',
+  "&apos;":"'",
+  "&quot;":'"',
 };
 
 var UniNameCharcor = {
-//"SECTION_MARKER":"",
-"BULLET_CHARACTER":"•",
-"COPYRIGHT_SYMBOL":"©",
-"DEGREE_SYMBOL":"°",
-"ELLIPSIS_CHARACTER":"…",
-"PARAGRAPH_SYMBOL":"¶",
-"REGISTERED_TRADEMARK":"",
-"SECTION_SYMBOL":"§",
-"REGISTERED_TRADEMARK":"®",
-"TRADEMARK_SYMBOL":"™",
-"EM_DASH":"—",
-"EN_DASH":"–",
-// DISCRETIONARY_HYPHEN is a very special case: there is a glyph coded for
-// this character in the font, and the glyph appears in the glyph
-// list of InDesign, but if you click on it, it won't appear (as this code is
-// not displayed), so sometimes, when you have this code this means that the user
-// tried to select the glyph, but it didn't work, so it should be replaced by
-// nothing, hence the special code...
-"DISCRETIONARY_HYPHEN":"XXX",
-//"NONBREAKING_HYPHEN":"",
-"DOUBLE_LEFT_QUOTE":"“",
-"DOUBLE_RIGHT_QUOTE":"”",
-"SINGLE_LEFT_QUOTE":"‘",
-"SINGLE_RIGHT_QUOTE":"’",
-//"NONBREAKING_SPACE":"",
-"SINGLE_STRAIGHT_QUOTE":"'",
-"DOUBLE_STRAIGHT_QUOTE":'"',
+  //"SECTION_MARKER":"",
+  "BULLET_CHARACTER":"•",
+  "COPYRIGHT_SYMBOL":"©",
+  "DEGREE_SYMBOL":"°",
+  "ELLIPSIS_CHARACTER":"…",
+  "PARAGRAPH_SYMBOL":"¶",
+  "REGISTERED_TRADEMARK":"",
+  "SECTION_SYMBOL":"§",
+  "REGISTERED_TRADEMARK":"®",
+  "TRADEMARK_SYMBOL":"™",
+  "EM_DASH":"—",
+  "EN_DASH":"–",
+  // DISCRETIONARY_HYPHEN is a very special case: there is a glyph coded for
+  // this character in the font, and the glyph appears in the glyph
+  // list of InDesign, but if you click on it, it won't appear (as this code is
+  // not displayed), so sometimes, when you have this code this means that the user
+  // tried to select the glyph, but it didn't work, so it should be replaced by
+  // nothing, hence the special code...
+  "DISCRETIONARY_HYPHEN":"XXX",
+  //"NONBREAKING_HYPHEN":"",
+  "DOUBLE_LEFT_QUOTE":"“",
+  "DOUBLE_RIGHT_QUOTE":"”",
+  "SINGLE_LEFT_QUOTE":"‘",
+  "SINGLE_RIGHT_QUOTE":"’",
+  //"NONBREAKING_SPACE":"",
+  "SINGLE_STRAIGHT_QUOTE":"'",
+  "DOUBLE_STRAIGHT_QUOTE":'"',
 "LEFT_DOUBLE_QUOTATION_MARK":"“",
 };
 
@@ -465,95 +476,94 @@ tibmachweb['9'] = [[" ", 2], ["", 2], ["༖", 2], ["༗", 2], ["༘", 2], ["༙"
 // - 1: the vowel to put after the wylie transliteration in the case of a (e)dedris font, or 0
 // - 2: the character correspondance table
 function getFontTable(fontname) {
-    switch (fontname.substring(0,1)){
-      case "D":
-        if (fontname.substring(0,6) == "Dedris") {
-          var vow = '';
-              var tmp = parseInt(fontname.substring(8,9));
-              if (tmp != 0 && !isNaN(tmp) && tmp != null) {
-                    vow = vowels[tmp];
-              }
-              if (fontname.substring(7,8) == "v") {
-                return [ededrisvow, 0, ededrisCharcor];
-              }
-          return [ededris[fontname.substring(7,8)], vow, ededrisCharcor];
-          }
-        else {return null;}
-        break;
-      case "E":
-        if (fontname.substring(0,7) == "Ededris") {
-          var vow = '';
-              var tmp = parseInt(fontname.substring(9,10));
-              if (tmp != 0 && !isNaN(tmp) && tmp != null) {
-                    vow = vowels[tmp];
-              }
-              if (fontname.substring(8,9) == "v") {
-                return [ededrisvow, 0, ededrisCharcor];
-              }
-          return [ededris[fontname.substring(8,9)], vow, ededrisCharcor];
-          }
-        else {if (fontname.substring(0,4) == "Esam") {
-          return [esama[fontname.substring(4,5)], 0, esemaCharcor];
-          }
-          else {return null;}}
-        break;
-      case "T":
-        if (fontname.substring(0,17) == "TibetanMachineWeb" && ConvertTibetanMachineWeb == 1) {
-          var number = '0';
-          var tmp = parseInt(fontname.substring(17,18));
-          if (tmp != 0 && !isNaN(tmp) && tmp != null) {
-                number = tmp;
-          }
-          return [tibmachweb[number], 0, tibmachineCharcor];
+  switch (fontname.substring(0,1)){
+    case "D":
+      if (fontname.substring(0,6) == "Dedris") {
+        var vow = '';
+        var tmp = parseInt(fontname.substring(8,9));
+        if (tmp != 0 && !isNaN(tmp) && tmp != null) {
+          vow = vowels[tmp];
         }
-        if (fontname.substring(0,17) == "TibetanChogyalSkt") {
-          var number = '1';
-          var tmp = parseInt(fontname.substring(17,18));
-          if (tmp != 0 && !isNaN(tmp) && tmp != null) {
-                number = tmp;
-          }
-          return [tibchosgyalskt[number], 0, TCCCharcor];
+        if (fontname.substring(7,8) == "v") {
+          return [ededrisvow, 0, ededrisCharcor];
         }
-        if (fontname.substring(0,14) == "TibetanChogyal") {
-          return [tibchosgyal[0], 0, TCCCharcor];
-        }
-        else {return null;}
-        break;
-      default:
+        return [ededris[fontname.substring(7,8)], vow, ededrisCharcor];
+      } else {
         return null;
-        break;
-    }
+      }
+      break;
+    case "E":
+      if (fontname.substring(0,7) == "Ededris") {
+        var vow = '';
+        var tmp = parseInt(fontname.substring(9,10));
+        if (tmp != 0 && !isNaN(tmp) && tmp != null) {
+          vow = vowels[tmp];
+        }
+        if (fontname.substring(8,9) == "v") {
+          return [ededrisvow, 0, ededrisCharcor];
+        }
+        return [ededris[fontname.substring(8,9)], vow, ededrisCharcor];
+      } else {
+        if (fontname.substring(0,4) == "Esam") {
+          return [esama[fontname.substring(4,5)], 0, esemaCharcor];
+        } else {
+          return null;
+        }
+      }
+      break;
+    case "T":
+      if (fontname.substring(0,17) == "TibetanMachineWeb" && ConvertTibetanMachineWeb == 1) {
+        var number = '0';
+        var tmp = parseInt(fontname.substring(17,18));
+        if (tmp != 0 && !isNaN(tmp) && tmp != null) {
+          number = tmp;
+        }
+        return [tibmachweb[number], 0, tibmachineCharcor];
+      }
+      if (fontname.substring(0,17) == "TibetanChogyalSkt") {
+        var number = '1';
+        var tmp = parseInt(fontname.substring(17,18));
+        if (tmp != 0 && !isNaN(tmp) && tmp != null) {
+          number = tmp;
+        }
+        return [tibchosgyalskt[number], 0, TCCCharcor];
+      }
+      if (fontname.substring(0,14) == "TibetanChogyal") {
+        return [tibchosgyal[0], 0, TCCCharcor];
+      } else {
+        return null;
+      }
+      break;
+    default:
+      return null;
+      break;
+  }
 }
 
 // this function takes a character (c) and a font name as returned by InDesign and 
 // returns the unicode -- plus the type of character (consonant, vowel, etc.), though unused
 // as described in the comments of the font tables.
 function ConvertChar(c, fname) {
-  //alert(c);
-  //alert(fname);
   if (fname.substring(0,16) == "Ededris-sym" || fname.substring(0,16) == "Dedris-syma") {
     var cc = ededrisyma[c];
     if (cc==null) {return c;} else {return cc;}
   }
   var f = getFontTable(fname);
   if (f == null) {return c;}
-  //alert(f);
   var cc = f[2][c];
-  //alert(cc);
-  //alert(f[0][cc]);
   if (UniNameCharcor[c]=="XXX" || CS3Charcor[c]=="XXX") // see the comment on DISCRETIONARY_HYPHEN, far above
     {
       return ["", 0];
     }
   if (cc == null) {
-        cc = f[2][UniNameCharcor[c]];
-          if (cc == null) {
-            cc = f[2][CS3Charcor[c]];
-          }
+    cc = f[2][UniNameCharcor[c]];
+    if (cc == null) {
+      cc = f[2][CS3Charcor[c]];
     }
+  }
   if (cc == null || f[0][cc] == null) {
-        return [c, 4];
-    }
+    return [c, 4];
+  }
   if (f[1] == 0) {
     return f[0][cc];
   } else {
@@ -568,39 +578,39 @@ function ConvertChar(c, fname) {
 
 // this function was taken from the Adobe examples.
 function FindandReplace(){
-    if (app.documents.length != 0){
-        if (app.selection.length == 1){
-            //Evaluate the selection based on its type.
-            switch (app.selection[0].constructor.name){
-                case "InsertionPoint":
-                case "Character":
-                case "Word":
-                case "TextStyleRange":
-                case "Line":
-                case "Paragraph":
-                case "TextColumn":
-                case "Text":
-                case "Story":
-                    //The object is a text object; pass it on to a function.
-                    myProcessText(app.selection[0]);
-                break;
-                //In addition to checking for the above text objects, we can
-                //also continue if the selection is a text frame selected with
-                //the Selection tool or the Direct Selection tool.
-                case "TextFrame":
-                    //If the selection is a text frame, get a reference to the
-                    //text in the text frame.
-                    myProcessText(app.selection[0].texts.item(0));
-                    break;
-                default:
-                    alert("The selected object is not a text object. Select some text and try again.");
-                    break;
-            }
-        }
-        else{
-            alert("Please select some text and try again.");
-        }
+  if (app.documents.length != 0){
+    if (app.selection.length == 1){
+      //Evaluate the selection based on its type.
+      switch (app.selection[0].constructor.name){
+        case "InsertionPoint":
+        case "Character":
+        case "Word":
+        case "TextStyleRange":
+        case "Line":
+        case "Paragraph":
+        case "TextColumn":
+        case "Text":
+        case "Story":
+          //The object is a text object; pass it on to a function.
+          myProcessText(app.selection[0]);
+        break;
+        //In addition to checking for the above text objects, we can
+        //also continue if the selection is a text frame selected with
+        //the Selection tool or the Direct Selection tool.
+        case "TextFrame":
+          //If the selection is a text frame, get a reference to the
+          //text in the text frame.
+          myProcessText(app.selection[0].texts.item(0));
+          break;
+        default:
+          alert("The selected object is not a text object. Select some text and try again.");
+          break;
+      }
     }
+    else{
+      alert("Please select some text and try again.");
+    }
+  }
 }
 
 // The main function called with the selection as an argument, it replaces it with the
@@ -609,50 +619,74 @@ function FindandReplace(){
 // your document and transcribe it.
 
 function myProcessText(myTextObject){
-    // loop on characters
-    try
-        {
-            if (myTextObject.composer == "Adobe Paragraph Composer") {
-                myTextObject.composer = "Adobe World-Ready Paragraph Composer";
-                return;
-                }
-            if (myTextObject.composer == "Adobe Single-line Composer") {
-                myTextObject.composer = "Adobe World-Ready Single-line Composer";
-                return;
-                }
-        }
+  var myDocument = app.documents.item(0);
+  // conver to World Ready Composer?
+  if (ConvertToWRC) {
+    try {
+      if (myTextObject.composer == "Adobe Paragraph Composer") {
+        myTextObject.composer = "Adobe World-Ready Paragraph Composer";
+      }
+      if (myTextObject.composer == "Adobe Single-line Composer") {
+        myTextObject.composer = "Adobe World-Ready Single-line Composer";
+      }
+    }
     catch (_){}
-    var c;
-    var res = "";
-    var lastisa = 0; // to know if the last encountered consonant is a
-    for (var myCharCounter = 0; myCharCounter < myTextObject.characters.length; myCharCounter++) {
-          c = myTextObject.characters.item(myCharCounter);
-          // hack: we replace >ù in TibetanChogyal by a unicode OM
-          //alert(c.contents);
-          if(c.appliedFont.name.substring(0,14) == "TibetanChogyal"
-          && c.appliedFont.name.substring(14,15) != "S" 
-          && c.contents == ">" 
-          && myCharCounter+1 < myTextObject.characters.length
-          && myTextObject.characters.item(myCharCounter+1).contents == "ù") 
-          {
-               res+="ༀ";
-              myCharCounter = myCharCounter +1;
-            } else {
-              ct = ConvertChar(c.contents, c.appliedFont.name);
-          //alert(ct);
-          if (ct != 0 && ct != null){
-                res += ct[0];
-          }
-         //else {alert("alerte bleue ciel");}
-          //c.appliedFont = app.fonts.item(UniTibetanFont);
-            }
-          }
-    //myTextObject.appliedFont = app.fonts.item("Times New Roman");
-    myTextObject.appliedFont = app.fonts.item(UniTibetanFont);
-    myTextObject.pointSize = UniTibetanFontSize;
-    //alert(res);
-    myTextObject.contents = res;
-    //alert(res);
+  }
+  var c;
+  var res = "";
+  var lastisa = 0; // to know if the last encountered consonant is a
+  for (var myCharCounter = 0; myCharCounter < myTextObject.characters.length; myCharCounter++) {
+    c = myTextObject.characters.item(myCharCounter);
+    // hack: we replace >ù in TibetanChogyal by a unicode OM
+    //alert(c.contents);
+    if(c.appliedFont.name.substring(0,14) == "TibetanChogyal"
+        && c.appliedFont.name.substring(14,15) != "S" 
+        && c.contents == ">" 
+        && myCharCounter+1 < myTextObject.characters.length
+        && myTextObject.characters.item(myCharCounter+1).contents == "ù") {
+      res+="ༀ";
+      myCharCounter = myCharCounter +1;
+    } else {
+      ct = ConvertChar(c.contents, c.appliedFont.name);
+      if (ct != 0 && ct != null){
+        res += ct[0];
+      }
+    }
+  }
+  var unifont = app.fonts.item(UniTibetanFont);
+  myTextObject.appliedFont = unifont;
+  myTextObject.contents = res;
+  for (var myCharCounter = 0; myCharCounter < myTextObject.characters.length; myCharCounter++) {
+    c = myTextObject.characters.item(myCharCounter);
+    // Now handling font size correspondances:
+    var fs = FontSizeCor[c.pointSize];
+    if (fs) {
+      // if it's a number, then we apply this font size
+      if (typeof fs === 'number') {
+        c.pointSize = fs;
+      } else {
+        fs = String(fs);
+        // else we consider it's a string, so we apply the character style corresponding to the string to it:  
+        // (next code is from Adobe's examples
+        try {
+          myCharacterStyle = myDocument.characterStyles.item(fs);
+          //If the style does not exist, trying to get its name will generate an error.
+          myName = myCharacterStyle.name;
+         }
+        catch (myError){
+          //The style did not exist, so create it.
+          myCharacterStyle = myDocument.characterStyles.add({name:fs});
+        }
+        c.appliedCharacterStyle = myCharacterStyle;
+      }
+    } else {
+      c.pointSize = UniTibetanFontSize;
+    }
+  }
+}
+
+function main(){
+    FindandReplace();
 }
 
 main();
