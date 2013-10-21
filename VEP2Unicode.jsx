@@ -21,7 +21,7 @@
 // use we have here, but 1 is quite a reasonable default.
 var ConvertTibetanMachineWeb = 1;
 // set the font you want to use for Unicode:
-var UniTibetanFont = "Jomolhari-ID";
+var UniTibetanFont = "REPLACE THIS BY THE FONT YOU WANT TO USE";
 var UniTibetanFontSize = 0;
 // WRC shouldn't be used (too buggy with Tibetan...)
 var ConvertToWRC = 0;
@@ -150,7 +150,7 @@ var ChosgyalCharcor = {' ':0, '!':1, '"':2, '#':3, '$':4, '%': 5, '&':6, '\'':7,
 //'':227, 
 '':197,
 // Some other buggy things (ID specific it seems)...
-'₫':223, '₮':225, '₯':226, '₰':227, '₪':224,
+'₫':95, '₪':96, '₮':97, '₯':98, '₰':99,
 //"DISCRETIONARY_HYPHEN":112, "1396983920":112
 };
 
@@ -438,6 +438,20 @@ tibchosgyalskt['5'] = [[" ",0], ["༠༠༠༠",0], ["༠༠༠༠",0], ["༠༠
 ["༠༠༠༠",0], ["༠༠༠༠",0], ["༠༠༠༠",0], ["༠༠༠༠",0], ["༠༠༠༠",0], ["༠༠༠༠",0], ["༠༠༠༠",0], ["༠༠༠༠",0], ["༠༠༠༠",0], ["༠༠༠༠",0],
 ["༠༠༠༠",0]];
 
+// XXX: a "feature of Tibetan Classic Skt2 is that 52 and 53 are switched compared to Tibetan Chogyal Skt2...
+
+var tibclassic = tibchosgyal;
+var tibclassicskt = new Array();
+tibclassicskt[1] = tibchosgyalskt[1];
+tibclassicskt[2] = tibchosgyalskt[2].slice(0);
+var tmp = tibclassicskt[2][53];
+tibclassicskt[2][53] = tibclassicskt[2][52];
+tibclassicskt[2][52] = tmp;
+tibclassicskt[3] = tibchosgyalskt[3];
+tibclassicskt[4] = tibchosgyalskt[4];
+tibclassicskt[5] = tibchosgyalskt[5];
+
+
 // The table for the TibetanMachineWeb fonts
 
 var tibmachweb = new Array();
@@ -538,10 +552,10 @@ function getFontTable(fontname) {
         if (tmp != 0 && !isNaN(tmp) && tmp != null) {
           number = tmp;
         }
-        return [tibchosgyalskt[number], 0, ChosgyalCharcor];
+        return [tibclassicskt[number], 0, ChosgyalCharcor];
       }
       if (fontname.substring(0,14) == "TibetanClassic") {
-        return [tibchosgyal[0], 0, ChosgyalCharcor];
+        return [tibclassic[0], 0, ChosgyalCharcor];
       }
       break;
     default:
