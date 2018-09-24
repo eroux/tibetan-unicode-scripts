@@ -26,7 +26,7 @@ headers).
 
 There are currently two scripts:
 
-##All fonts (except LTibetan) to Unicode for AdobeIndesign
+## All fonts (except LTibetan) to Unicode for AdobeIndesign
 
 This is an InDesign jsx script that you can save to:
  * Windows XP: `C:\Documents and Settings\<username>\Application Data\Adobe\InDesign\<version>\<username>\Scripts\Scripts Panel\`
@@ -42,7 +42,7 @@ editing the script (it is in the first lines).
 
 Not that it auomatically sets the Paragraph Builder to World-Ready Composer.
 
-##LTibetan to Unicode for LibreOffice
+## LTibetan to Unicode for LibreOffice
 
 This is a python script that you can save to (under Linux)
     <home>/.config/libreoffice/<version>/user/Scripts/python/LtibtoUni.py
